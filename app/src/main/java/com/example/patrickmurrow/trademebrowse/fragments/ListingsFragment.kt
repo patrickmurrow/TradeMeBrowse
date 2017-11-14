@@ -20,6 +20,8 @@ import org.json.JSONException
 import org.json.JSONObject
 
 /**
+ * Fragment for displaying a list of listings.
+ *
  * Created by patrickmurrow on 10/11/17.
  */
 class ListingsFragment : Fragment() {
@@ -41,6 +43,12 @@ class ListingsFragment : Fragment() {
         return inflater?.inflate(R.layout.fragment_listings, container, false)
     }
 
+    /**
+     * To be called to update the list with the given category and search query.
+     *
+     * @param categoryNumber - the category's unique String identifier
+     * @param searchQuery - search string, will return the category listings if empty
+     */
     fun updateListings(categoryNumber: String, searchQuery: String) {
         showProgress()
         listings.clear()
@@ -60,6 +68,10 @@ class ListingsFragment : Fragment() {
         listingsProgress.visibility = View.GONE
     }
 
+    /**
+     * Gets the listings for the latest given search query.
+     * Maps the json response to a list of listings to display.
+     */
     private fun getListings() {
         val responseListener = Response.Listener<JSONObject> { response ->
             try {
@@ -71,7 +83,7 @@ class ListingsFragment : Fragment() {
                     }
                 }
 
-                updateViews()
+                updateListingsList()
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
@@ -80,7 +92,7 @@ class ListingsFragment : Fragment() {
         NetworkHelper.requestListingsBySearchWithCategory(searchQuery, categoryNumber, responseListener, errorListener)
     }
 
-    private fun updateViews() {
+    private fun updateListingsList() {
         hideProgress()
 
         val slideUp = AnimationUtils.loadAnimation(activity, R.anim.slide_up_in_anim)
